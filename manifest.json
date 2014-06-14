@@ -4,9 +4,10 @@
   "name": "Lernplaner",
   "description": "Gib Ablenkung keine Chance.",
   "version": "1.0",
+  "icons": { "128": "images/calendar-icon_128.png" },
 
   "browser_action": {
-    "default_icon": "images/calendar-icon.png",
+    "default_icon": "images/calendar-icon_32.png",
     "default_popup": "popup.html"
   },
   "permissions": [
