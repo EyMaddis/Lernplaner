@@ -16,3 +16,11 @@ To install the package:
 npm install coffee-script 
 ```
 
+
+Credits
+==========
+
+The calendar icon is created by:
+
+[Martz90](http://www.iconarchive.com/show/circle-icons-by-martz90/calendar-icon.html) used under Creative Commons License BY-NC-ND 3.0
+
