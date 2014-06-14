@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+
+  "name": "Lernplaner",
+  "description": "Gib Ablenkung keine Chance.",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "images/calendar-icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "https://secure.flickr.com/"
+  ]
+}
