@@ -18,7 +18,8 @@ You will need to
 2. Create a File Watcher
 3. Open the **Settings > JavaScript > Libraries** and add the **js/lib** directory for the project
 4. [Learn CoffeeScript](http://coffeescript.codeschool.com/) ;)
-5. Contribute
+5. Read and understand the [Chrome Developer Guides](https://developer.chrome.com/extensions)
+6. Contribute
 
 
 Credits
@@ -30,3 +31,6 @@ The calendar icon is created by:
 * [chrome_extensions.js from the Google Closure Compiler Project](https://github.com/google/closure-compiler) used under Apache License, yet just needed in the development environment
 * [FullCalendar by Adam Shaw](http://arshaw.com/fullcalendar/) used under MIT License
 * [Bootstrap 3](http://getbootstrap.com) used under MIT License
+* [jQuery](http://jquery.com) used under MIT License
+* [jQuery UI](http://jqueryui.com) used under MIT License
+* [Moment.js](http://momentjs.com/) used under MIT License
