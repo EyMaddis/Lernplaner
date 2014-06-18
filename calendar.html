@@ -16,21 +16,48 @@
 </head>
 <body>
     <div class="wrapper">
-        <div id='external-events'>
-            <h4>Draggable Events</h4>
-            <div class='external-event'>
-                <div class="btn-group">
-                    <div class="btn btn-success">Termin</div>
+        <div class="addPhase">
+            <form action="#" id="addPhaseForm" class="form-inline form-horizontal">
+                <div class="form-group">
+                    <label for="name" class="col-sm-2 control-label">Fach:</label>
+
+                    <div class="col-sm-10">
+                        <input name="name" id="name" class="form-control" placeholder="Name des Fachs" type="text" required />
+                    </div>
                 </div>
+                <div class="form-group time from">
+                    <label for="from-hours" class="col-sm-2 control-label">Von:</label>
+                    <div class="col-sm-10">
+                        <input name="from-hour" id="from-hours" class="form-control hour" placeholder="hh" type="number" min="0" max="23" size="2" required /> :
+                        <input name="from-minutes" id="from-minutes" class="form-control minute" placeholder="mm" type="number" min="0" max="59" size="2" required />
+                    </div>
+                </div>
+                <div class="form-group time until">
+                    <label for="until-hours" class="col-sm-2 control-label">Bis:</label>
+
+                    <div class="col-sm-10">
+                        <input name="until-hour" id="until-hours" class="form-control hour" placeholder="hh" type="number" min="0" max="23" maxlength="2" size="2" required /> :
+                        <input name="until-minutes" id="until-minutes" class="form-control minute" placeholder="mm" type="number" min="0" max="59" maxlength="2" size="2" required />
+                    </div>
+                </div>
+                <input class="btn btn-success" id="addPhaseBtn" value="Hinzufügen" type="submit"/>
+            </form>
+        </div>
+
+        <div id='external-events'>
+            <h4>Lernphasen</h4>
+            <div class='external-event'>
             </div>
-            <p>
-                <input type='checkbox' id='drop-remove' />
-                <label for='drop-remove'>remove after drop</label>
-            </p>
         </div>
 
         <span id="test">Test</span>
         <div id='calendar'></div>
+
+        <div id="phase-dummy" hidden>
+            <div class="btn-group">
+                <div class="btn btn-success">%NAME%</div>
+            </div>
+        </div>
     </div>
 </body>
 </html>

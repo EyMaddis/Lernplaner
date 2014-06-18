@@ -8,3 +8,15 @@ body {
 #calendar {
     /*width: 500px;*/
 }
+
+.add {
+    /*width: 50%;*/
+}
+
+input.has-error {
+    border-color: #a94442;
+}
+input.has-error:hover, input.has-error:active {
+    border-color: #843534;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
+}
