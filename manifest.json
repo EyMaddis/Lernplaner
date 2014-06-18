@@ -12,5 +12,8 @@
   },
   "permissions": [
     "https://secure.flickr.com/"
-  ]
+  ],
+    "web_accessible_resources": [
+        "images/calendar-icon_128.png"
+    ]
 }
