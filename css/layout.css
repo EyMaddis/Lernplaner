@@ -1,0 +1,10 @@
+body {
+}
+.wrapper {
+    padding: 20px;
+    width: 1000px;
+    margin: auto;
+}
+#calendar {
+    /*width: 500px;*/
+}
