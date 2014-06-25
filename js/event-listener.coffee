@@ -1,4 +1,4 @@
-chrome.webNavigation.onCompleted.addListener( (event) ->
+callback = (event) ->
   console.log event
   opt = {
     type: "basic",
@@ -8,4 +8,10 @@ chrome.webNavigation.onCompleted.addListener( (event) ->
   }
   chrome.notifications.create 'superId'+Math.random(), opt, () ->
     console.log 'notification callback!'
-)
+
+
+chrome.webNavigation.onCompleted.addListener callback, {
+  url: [
+    { hostSuffix: 'kaleydra.de'},
+    { hostSuffix: 'facebook.com'}]
+}
