@@ -5,6 +5,7 @@
     "description": "Gib Ablenkung keine Chance.",
     "version": "1.0",
     "icons": { "128": "images/calendar-icon_128.png" },
+    "options_page": "calendar.html",
 
     "browser_action": {
     "default_icon": "images/calendar-icon_32.png",
@@ -15,5 +16,9 @@
     ],
     "web_accessible_resources": [
         "images/calendar-icon_128.png"
-    ]
+    ],
+    "background": {
+        "scripts": ["js/event-listener.js"],
+        "persistent": false
+    }
 }

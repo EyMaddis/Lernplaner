@@ -22,6 +22,15 @@ You will need to
 6. Contribute
 
 
+Useful Resources
+==========
+
+* [Chrome API Index](https://developer.chrome.com/extensions/api_index)
+* [Saving data](https://developer.chrome.com/extensions/storage)
+* [Using events](https://developer.chrome.com/extensions/events)
+* [Desktop notifications](https://developer.chrome.com/extensions/desktop_notifications)
+* [Page loaded event](https://developer.chrome.com/extensions/webNavigation#event-onCompleted)
+
 Credits
 ==========
 
