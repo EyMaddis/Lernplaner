@@ -13,7 +13,8 @@
     "permissions": [
         "https://*/",
         "webNavigation",
-        "tabs"
+        "tabs",
+        "notifications"
     ],
     "web_accessible_resources": [
         "images/calendar-icon_128.png"
