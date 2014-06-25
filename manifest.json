@@ -6,7 +6,6 @@
     "version": "1.0",
     "icons": { "128": "images/calendar-icon_128.png" },
     "options_page": "calendar.html",
-    "background_page": "background.html",
     "browser_action": {
     "default_icon": "images/calendar-icon_32.png",
     "default_popup": "popup.html"
@@ -21,6 +20,6 @@
     ],
     "background": {
         "scripts": ["js/event-listener.js"],
-        "persistent": true
+        "persistent": false
     }
 }
