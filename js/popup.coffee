@@ -8,3 +8,4 @@ chrome.tabs.onCreated.addListener( () ->
   alert "Page geladen!"
 
 )
+
