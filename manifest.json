@@ -12,7 +12,7 @@
     },
     "permissions": [
         "https://*/",
-        "alarms",
+        "webNavigation",
         "tabs"
     ],
     "web_accessible_resources": [
