@@ -2751,8 +2751,8 @@ var similarUnitMap = {
 	a: 'second', // am/pm
 	T: 'second', // A/P
 	t: 'second', // a/p
-	H: 'second', // hour (24)
-	h: 'second', // hour (12)
+	H: 'second', // hours (24)
+	h: 'second', // hours (12)
 	m: 'second', // minute
 	s: 'second' // second
 };

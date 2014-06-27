@@ -14,7 +14,8 @@
         "https://*/",
         "webNavigation",
         "tabs",
-        "notifications"
+        "notifications",
+        "storage"
     ],
     "web_accessible_resources": [
         "images/calendar-icon_128.png"

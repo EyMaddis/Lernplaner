@@ -1,3 +1,11 @@
+learnPhases = []
+learnSessions = []
+
+chrome.storage.local.get ['learnPhases', 'learnSessions'], (items) ->
+  learnPhases = items.learnPhases || []
+  learnSessions = items.learnSessions || []
+  console.log 'loaded', learnPhases, learnSessions
+
 $ () -> # execute when DOM is ready
 
   $('.addPhase input[type=submit]').tooltip({
@@ -7,7 +15,7 @@ $ () -> # execute when DOM is ready
 
   # form validation
   timeChecks = {
-    hour:
+    hours:
       format: ['HH','H']
       error: 'Nicht zwischen 0 und 24'
     minute:
@@ -19,40 +27,23 @@ $ () -> # execute when DOM is ready
   $form = $ '#addPhaseForm'
   $form.on 'submit', (event) ->
     event.preventDefault()
-    $inputs = $('#addPhaseForm').find 'input:not(.btn)'
-    values = {}
-    $inputs.each () -> # for some reason won't fire for the time inputs
-      input = $ @
-      name = input.attr 'name'
-      type = input.attr 'type'
-      value = input.val()
-      values[name] = value
-      if type.toLowerCase() is 'number'
-        values[name] = parseInt value
 
-#    timeFrom = moment {
-#      hour: values['from-hour']
-#      minute: values['from-minute']
-#    }
-#    timeUntil = moment {
-#      hour: values['until-hour']
-#      minute: values['until-minute']
-#    }
     learningPhase = { # use the element's text as the event title
-      title: values['name']
+      title: $('#name').val()
       start:
-        hour: values['from-hours']
-        minute: values['from-minutes']
+        hours: parseInt $('#from-hours').val()
+        minutes: parseInt $('#from-minutes').val()
       end:
-        hour: values['until-hours']
-        minute: values['until-minutes']
+        hours: parseInt $('#until-hours').val()
+        minutes: parseInt $('#until-minutes').val()
     }
 
     # create new phase element
     added = $ '<div></div>'
     added.data 'learningPhase', learningPhase
+    learnPhases.push learningPhase
     dummy = $('#phase-dummy').html()
-    dummy = dummy.replace '%NAME%', values['name']
+    dummy = dummy.replace '%NAME%', learningPhase.name
     added.html dummy
     added.appendTo 'body'
 
@@ -93,6 +84,13 @@ $ () -> # execute when DOM is ready
     # make the event draggable using jQuery UI
     makeDraggable $(this)
 
+  saveAll = () ->
+    chrome.storage.local.set {
+      'learnPhases': learnPhases
+      'learnSessions': learnSessions
+    }, () ->
+      console.log 'saved!'
+
   $('#calendar').fullCalendar({
     header: {
       left: 'prev,next today'
@@ -103,17 +101,28 @@ $ () -> # execute when DOM is ready
     droppable: true # this allows things to be dropped onto the calendar !!!
     drop: (date) -> # this function is called when something is dropped
       # retrieve the dropped element's stored Event Object
-      originalEventObject = $(this).data('learningPhase')
+      learningPhase = $(this).data('learningPhase')
       
       # we need to copy it, so that multiple events don't have a reference to the same object
-      copiedEventObject = $.extend({}, originalEventObject)
+      event = $.extend {}, learningPhase
 
       # assign it the date that was reported
-      copiedEventObject.start = date
+      start = date.clone()
+      start.set 'minutes', learningPhase.start.minutes
+      start.set 'h', learningPhase.start.hours
+      event.start = start
 
+      event.end = date.clone()
+      event.end.set 'h', learningPhase.end.hours
+      event.end.set 'minutes', learningPhase.end.minutes
+
+      event.allDay = false
+
+      learnSessions.push event
+      saveAll()
       # render the event on the calendar
       # the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
-      $('#calendar').fullCalendar('renderEvent', copiedEventObject, true)
+      $('#calendar').fullCalendar 'renderEvent', event, true
   })
 
 
