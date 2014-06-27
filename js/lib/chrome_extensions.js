@@ -3,6 +3,7 @@
  * https://github.com/google/closure-compiler/blob/master/contrib/externs/chrome_extensions.js
  * just for the IDE development
  ************************************************************************************************/
+window.chrome = {}
 /*
  * Copyright 2009 The Closure Compiler Authors
  *
