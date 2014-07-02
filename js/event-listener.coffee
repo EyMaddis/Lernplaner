@@ -92,10 +92,3 @@ chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
     console.log badtab
 )
 
-updateCurrentTabs : ()->
-  chrome.tabs.query({}, (tabs) ->
-    for tab in tabs
-      unless tab.id in currentTabs
-        currentTabs.push tab.id
-  )
-  console.log currentTabs
