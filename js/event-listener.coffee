@@ -1,3 +1,5 @@
+scoreManager = new ScoreManager()
+
 callback = (event) ->
   console.log event
   opt = {
@@ -27,5 +29,29 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
       chrome.notifications.create 'superId'+Math.random(), opt, () ->
         console.log 'notification callback!'
  )
+
+
+class ScoreManager
+  HOUR_BONUS = 20
+  BONUS = 1
+  MALUS = 1
+
+  constructor : () ->
+    @score = 0
+
+  newPhase: (hours) ->
+    @score = hours * HOUR_BONUS
+
+  giveBonus: () ->
+    @score += BONUS
+
+  giveMalus: () ->
+    @score -= MALUS
+
+
+
+
+
+
 
 
