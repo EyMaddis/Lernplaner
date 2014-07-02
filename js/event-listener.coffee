@@ -38,6 +38,8 @@ chrome.tabs.onRemoved.addListener((tab, changeInfo) ->
    badtab.splice(tab.id)
 )
 
+class TabInfo
+  costructor: (@id,@time) ->
 
 class ScoreManager
   HOUR_BONUS = 20
