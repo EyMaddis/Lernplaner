@@ -11,7 +11,7 @@ callback = (event) ->
 
 
 chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
-  blocked = ['kaleydra.de','facebook.com']
+  blocked = ['kaleydra.de','facebook.com','www.facebook.com']
 
 
   if changeInfo.status == 'complete'
