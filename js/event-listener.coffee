@@ -26,13 +26,15 @@ currentTabs = []
 
 scoreManager = new ScoreManager()
 
-updateCurrentTabs = ()->
-  #currentTabs = []
+updateCurrentTabs = (callback)->
+  currentTabs = []
   chrome.tabs.query({}, (tabs) ->
     for tab in tabs
       currentTabs.push tab.id
+    console.log currentTabs
+    callback()
   )
-  console.log currentTabs
+
 
 callback = (event) ->
   console.log event
@@ -53,37 +55,38 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
   if changeInfo.status == 'complete'
     url = new URL(tab.url)
 
-    updateCurrentTabs()
+    updateCurrentTabs () ->
 
-    if url.hostname in blocked
-      opt = {
-        type: "basic",
-        title: "Wolltest du nicht lernen?",
-        message: 'Nicht ablenken lassen!',
-        iconUrl: "images/calendar-icon_128.png"
-      }
-      unless tab.id in badtab
-        console.log badtab
-        badtab.push tab.id
-        console.log badtab
-      chrome.notifications.create 'superId'+Math.random(), opt, () ->
-        console.log 'notification callback!'
- )
+
+      if url.hostname in blocked
+        opt = {
+          type: "basic",
+          title: "Wolltest du nicht lernen?",
+          message: 'Nicht ablenken lassen!',
+          iconUrl: "images/calendar-icon_128.png"
+        }
+        unless tab.id in badtab
+          console.log badtab
+          badtab.push tab.id
+          console.log badtab
+        chrome.notifications.create 'superId'+Math.random(), opt, () ->
+          console.log 'notification callback!'
+   )
 
 chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
 
   badtabtemp = []
-  updateCurrentTabs()
-  console.log currentTabs
-  unless badtab.length == 0
-    for bad in badtab
-      for current in currentTabs
-        console.log bad
-        console.log current
-        if bad == current
-          badtabtemp.push (bad)
-  console.log badtabtemp
-  badtab = badtabtemp
-  badtabtemp = []
-  console.log badtab
+  updateCurrentTabs () ->
+    console.log badtab
+    unless badtab.length == 0
+      for bad in badtab
+        for current in currentTabs
+          console.log bad
+          console.log current
+          if bad == current
+            badtabtemp.push (bad)
+    console.log badtabtemp
+    badtab = badtabtemp
+    badtabtemp = []
+    console.log badtab
 )
