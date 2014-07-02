@@ -49,8 +49,8 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
       for tab in tabs
         unless tab.id in currentTabs
           currentTabs.push tab.id
-          console.log currentTabs
     )
+    console.log currentTabs
 
     if url.hostname in blocked
       opt = {
