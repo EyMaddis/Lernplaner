@@ -22,6 +22,8 @@ class ScoreManager
 
 badtab = []
 
+currentTabs = []
+
 scoreManager = new ScoreManager()
 
 callback = (event) ->
@@ -43,6 +45,13 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
   if changeInfo.status == 'complete'
     url = new URL(tab.url)
 
+    chrome.tabs.query({}, (tabs) ->
+      for tab in tabs
+        unless tab.id in currentTabs
+          currentTabs.push tab.id
+          console.log currentTabs
+    )
+
     if url.hostname in blocked
       opt = {
         type: "basic",
@@ -50,22 +59,24 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
         message: 'Nicht ablenken lassen!',
         iconUrl: "images/calendar-icon_128.png"
       }
-      badtab.push tab.id
+      unless tab.id in badtab
+        console.log badtab
+        badtab.push tab.id
+        console.log badtab
       chrome.notifications.create 'superId'+Math.random(), opt, () ->
         console.log 'notification callback!'
  )
 
-chrome.tabs.onRemoved.addListener((tab, changeInfo) ->
- if tab.id in badtab
-   badtab.splice(tab.id)
+chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
+
+  badtabtemp = []
+  console.log currentTabs
+  for bad in badtab
+    for current in currentTabs
+      if bad == current
+        badtabtemp.push (badtab.id)
+  console.log badtabtemp
+  badtab = badtabtemp
+  badtabtemp = []
+  console.log badtab
 )
-
-
-
-
-
-
-
-
-
-
