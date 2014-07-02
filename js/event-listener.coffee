@@ -48,11 +48,13 @@ class ScoreManager
   newPhase: (hours) ->
     @score = hours * HOUR_BONUS
 
-  giveBonus: () ->
-    @score += BONUS
+  giveBonus: (time) ->
+    time = time || 1
+    @score += time * BONUS
 
-  giveMalus: () ->
-    @score -= MALUS
+  giveMalus: (time) ->
+    time = time || 1
+    @score -= time * MALUS
 
 
 
