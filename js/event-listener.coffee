@@ -21,7 +21,9 @@ class ScoreManager
     time = time || 1
     @score -= time * MALUS
 
+isInLearningPhase = false
 badtab = []
+blocked = ['kaleydra.de','facebook.com','www.facebook.com']
 
 currentTabs = []
 
@@ -51,7 +53,6 @@ callback = (event) ->
 
 
 chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
-  blocked = ['kaleydra.de','facebook.com','www.facebook.com']
 
 
   if changeInfo.status == 'complete'
@@ -94,3 +95,14 @@ chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
     console.log 'badtab =' , badtab
 )
 
+chrome.runtime.onMessage.addListener (request) ->
+  type = request.type
+  if type is 'hostnames'
+    blocked = request.hostnames
+    console.log 'hostnames erhalten', blocked
+  else if type is 'startLearning'
+    isInLearningPhase = true
+    alert 'Lernphase gestartet!'
+  else # stop learning
+    isInLearningPhase = false
+    alert 'Lernphase beendet!'
