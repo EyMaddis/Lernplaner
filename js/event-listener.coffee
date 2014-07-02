@@ -10,6 +10,7 @@ class ScoreManager
     @score = 0
 
   newPhase: (hours) ->
+    hours = hours || 1
     @score = hours * HOUR_BONUS
 
   giveBonus: (time) ->
@@ -87,3 +88,11 @@ chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
   badtabtemp = []
   console.log badtab
 )
+
+updateCurrentTabs : ()->
+  chrome.tabs.query({}, (tabs) ->
+    for tab in tabs
+      unless tab.id in currentTabs
+        currentTabs.push tab.id
+  )
+  console.log currentTabs
