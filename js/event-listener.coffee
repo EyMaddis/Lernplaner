@@ -73,8 +73,8 @@ chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
   console.log currentTabs
   for bad in badtab
     for current in currentTabs
-      if bad == current
-        badtabtemp.push (badtab.id)
+      if bad == current.id
+        badtabtemp.push (bad)
   console.log badtabtemp
   badtab = badtabtemp
   badtabtemp = []
