@@ -43,7 +43,7 @@ $ () -> # execute when DOM is ready
     added.data 'learningPhase', learningPhase
     learnPhases.push learningPhase
     dummy = $('#phase-dummy').html()
-    dummy = dummy.replace '%NAME%', learningPhase.name
+    dummy = dummy.replace '%NAME%', learningPhase.title
     added.html dummy
     added.appendTo 'body'
 

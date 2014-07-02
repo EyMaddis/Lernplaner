@@ -26,9 +26,15 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
         message: 'Nicht ablenken lassen!',
         iconUrl: "images/calendar-icon_128.png"
       }
+      badtab = []
+      battab.push tab.id
       chrome.notifications.create 'superId'+Math.random(), opt, () ->
         console.log 'notification callback!'
  )
+
+chrome.tabs.onRemoved.addListener((tab, changeInfo) ->
+
+)
 
 
 class ScoreManager
