@@ -26,6 +26,14 @@ currentTabs = []
 
 scoreManager = new ScoreManager()
 
+updateCurrentTabs = ()->
+  #currentTabs = []
+  chrome.tabs.query({}, (tabs) ->
+    for tab in tabs
+      currentTabs.push tab.id
+  )
+  console.log currentTabs
+
 callback = (event) ->
   console.log event
   opt = {
@@ -45,12 +53,7 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
   if changeInfo.status == 'complete'
     url = new URL(tab.url)
 
-    chrome.tabs.query({}, (tabs) ->
-      for tab in tabs
-        unless tab.id in currentTabs
-          currentTabs.push tab.id
-    )
-    console.log currentTabs
+    updateCurrentTabs()
 
     if url.hostname in blocked
       opt = {
@@ -70,11 +73,15 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
 chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
 
   badtabtemp = []
+  updateCurrentTabs()
   console.log currentTabs
-  for bad in badtab
-    for current in currentTabs
-      if bad == current.id
-        badtabtemp.push (bad)
+  unless badtab.length == 0
+    for bad in badtab
+      for current in currentTabs
+        console.log bad
+        console.log current
+        if bad == current
+          badtabtemp.push (bad)
   console.log badtabtemp
   badtab = badtabtemp
   badtabtemp = []
