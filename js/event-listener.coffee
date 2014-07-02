@@ -1,3 +1,25 @@
+class TabInfo
+  costructor: (@id,@time) ->
+
+class ScoreManager
+  HOUR_BONUS = 20
+  BONUS = 1
+  MALUS = 1
+
+  constructor : () ->
+    @score = 0
+
+  newPhase: (hours) ->
+    @score = hours * HOUR_BONUS
+
+  giveBonus: (time) ->
+    time = time || 1
+    @score += time * BONUS
+
+  giveMalus: (time) ->
+    time = time || 1
+    @score -= time * MALUS
+
 badtab = []
 
 scoreManager = new ScoreManager()
@@ -38,27 +60,7 @@ chrome.tabs.onRemoved.addListener((tab, changeInfo) ->
    badtab.splice(tab.id)
 )
 
-class TabInfo
-  costructor: (@id,@time) ->
 
-class ScoreManager
-  HOUR_BONUS = 20
-  BONUS = 1
-  MALUS = 1
-
-  constructor : () ->
-    @score = 0
-
-  newPhase: (hours) ->
-    @score = hours * HOUR_BONUS
-
-  giveBonus: (time) ->
-    time = time || 1
-    @score += time * BONUS
-
-  giveMalus: (time) ->
-    time = time || 1
-    @score -= time * MALUS
 
 
 
