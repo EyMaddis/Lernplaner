@@ -1,12 +1,26 @@
+load = () ->
+  chrome.storage.local.get ['hostnames'], (loaded) ->
+    console.log 'loaded', loaded
+    for hostname in loaded.hostnames
+      append(hostname)
+
 saveHostnames = () ->
-  chrome.runtime.sendMessage {hostnames: getList(), type: 'hostnames'}
+  list = getList()
+  chrome.runtime.sendMessage {hostnames: list, type: 'hostnames'}
+  chrome.storage.local.set {hostnames: list}, () ->
+    console.log 'saved to local storage: ', list
 
 deleteHostname = () ->
   $(this).closest('.hostNameWrapper').fadeOut () ->
     $(this).remove()
+    saveHostnames()
 
-append = () ->
-  $('#inputTemplate').clone().removeAttr('id').appendTo('#hostnameInput').fadeIn()
+append = (val) ->
+  cloned = $('#inputTemplate').clone().removeAttr('id').appendTo('#hostnameInput')
+  console.log arguments[0]
+  if val
+    cloned.find('input').val val
+  cloned.fadeIn()
 
 getList = () ->
   hosts = []
@@ -17,6 +31,10 @@ getList = () ->
   return hosts
 
 $ () ->
+  load()
+  $(window).on 'beforeunload', () ->
+    alert()
+    saveHostnames()
 
   $('#startPhase').click () ->
     chrome.runtime.sendMessage {type: 'startLearning'}
@@ -25,4 +43,5 @@ $ () ->
   $('#hostnames button[type=submit]').click saveHostnames
   $('#hostnames').on 'click', '.hostnameRemover', deleteHostname
   $('#hostnames').on 'click', '.hostnameRemover span', deleteHostname
-  $('#addHostname').click append
+  $('#addHostname').click () ->
+    append()
