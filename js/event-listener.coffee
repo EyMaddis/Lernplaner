@@ -1,3 +1,11 @@
+###
+TODO
+endsWith = (hostname, blockedSuffix) ->
+...hostname.indexOf(blockedSuffix, hostname.length - blockedSuffix.length) !== -1;
+blockedSuffix immer der Form: ".facebook.com"
+endsWith("www.facebook.com", ".facebook.com") -> true!
+###
+
 class TabInfo
   costructor: (@id,@time) ->
 
