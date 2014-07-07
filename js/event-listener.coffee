@@ -41,9 +41,11 @@ formatDate = (date) ->
 
 isInLearningPhase = false
 badtab = []
+blocked = [/.facebook.com$/,/.9gag.com/]
+
 distractionStart = null
 distractionMinusPoints = 0
-blocked = ['kaleydra.de','facebook.com','www.facebook.com']
+
 
 currentTabs = []
 
@@ -80,6 +82,14 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
 
     updateCurrentTabs () ->
 
+      for block in blocked
+        if url.hostname.match block
+          opt = {
+            type: "basic",
+            title: "Wolltest du nicht lernen?",
+            message: 'Nicht ablenken lassen!',
+            iconUrl: "images/calendar-icon_128.png"
+          }
 
       if url.hostname in blocked
         opt = {
