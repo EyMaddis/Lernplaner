@@ -29,16 +29,23 @@ class ScoreManager
     time = time || 1
     @score -= time * MALUS
 
+forceTwoDigits = (val) ->
+  if val < 10
+    return "0#{val}"
+  return val
+
+formatDate = (date) ->
+  hour = forceTwoDigits(date.getHours())
+  minute = forceTwoDigits(date.getMinutes())
+  return "#{hour}#{minute}"
+
 isInLearningPhase = false
 badtab = []
+distractionStart = null
+distractionMinusPoints = 0
 blocked = ['kaleydra.de','facebook.com','www.facebook.com']
 
 currentTabs = []
-
-tabTime = {
-  id2: null,
-  time2: null
-}
 
 scoreManager = new ScoreManager()
 
@@ -81,17 +88,11 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
           message: 'Nicht ablenken lassen!',
           iconUrl: "images/calendar-icon_128.png"
         }
-        for bad in badtab
-          console.log bad
-          console.log tab.id
-          unless tab.id == bad.id2
-            tabTime.id2 = tab.id
-            console.log badtab
-            badtab.push tabTime
-            console.log badtab
-
-        #unless tab.id in badtab
-         # badtab.push tab.id
+        unless tab.id in badtab
+          badtab.push tab.id
+          if distractionStart == null
+            distractionStart = formatDate(new Date())
+            console.log distractionStart
         chrome.notifications.create 'superId'+Math.random(), opt, () ->
           console.log 'notification callback!'
           console.log 'badtab = ', badtab
@@ -112,6 +113,13 @@ chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
     #console.log badtabtemp
     badtab = badtabtemp
     badtabtemp = []
+    if badtab.length == 0
+      unless distractionStart == null
+        distractionEnd = formatDate(new Date())
+        #TODO distraction richtig berechnen wegen Uhrzeit kann nicht einfach abgezogen werden
+        distractionMinusPoints = distractionMinusPoints + (distractionEnd - distractionStart)
+        console.log 'minus = ', distractionMinusPoints
+      distractionStart = null
     console.log 'badtab =' , badtab
 )
 
@@ -122,7 +130,12 @@ chrome.runtime.onMessage.addListener (request) ->
     console.log 'hostnames erhalten', blocked
   else if type is 'startLearning'
     isInLearningPhase = true
+    learnTimeStart = formatDate(new Date())
     alert 'Lernphase gestartet!'
   else # stop learning
     isInLearningPhase = false
+    learnTimeEnd = formatDate(new Date())
+    #TODO learnTime richtig berechnen wegen Uhrzeit kann nicht einfach abgezogen werden
+    learnTime = learnTimeEnd - learnTimeStart
+
     alert 'Lernphase beendet!'
