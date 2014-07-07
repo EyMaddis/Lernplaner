@@ -35,6 +35,11 @@ blocked = ['kaleydra.de','facebook.com','www.facebook.com']
 
 currentTabs = []
 
+tabTime = {
+  id2: null,
+  time2: null
+}
+
 scoreManager = new ScoreManager()
 
 updateCurrentTabs = (callback)->
@@ -77,10 +82,16 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
           iconUrl: "images/calendar-icon_128.png"
         }
         for bad in badtab
-          if tab.id == bad.id
+          console.log bad
+          console.log tab.id
+          unless tab.id == bad.id2
+            tabTime.id2 = tab.id
             console.log badtab
-            badtab.push new TabInfo(tab.id, new Date)
+            badtab.push tabTime
             console.log badtab
+
+        #unless tab.id in badtab
+         # badtab.push tab.id
         chrome.notifications.create 'superId'+Math.random(), opt, () ->
           console.log 'notification callback!'
           console.log 'badtab = ', badtab
