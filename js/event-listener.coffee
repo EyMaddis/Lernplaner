@@ -31,7 +31,7 @@ class ScoreManager
 
 isInLearningPhase = false
 badtab = []
-blocked = ['kaleydra.de','facebook.com','www.facebook.com']
+blocked = [/.facebook.com$/,/.9gag.com/]
 
 currentTabs = []
 
@@ -73,28 +73,29 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
 
     updateCurrentTabs () ->
 
+      for block in blocked
+        if url.hostname.match block
+          opt = {
+            type: "basic",
+            title: "Wolltest du nicht lernen?",
+            message: 'Nicht ablenken lassen!',
+            iconUrl: "images/calendar-icon_128.png"
+          }
 
-      if url.hostname in blocked
-        opt = {
-          type: "basic",
-          title: "Wolltest du nicht lernen?",
-          message: 'Nicht ablenken lassen!',
-          iconUrl: "images/calendar-icon_128.png"
-        }
-        for bad in badtab
-          console.log bad
-          console.log tab.id
-          unless tab.id == bad.id2
-            tabTime.id2 = tab.id
-            console.log badtab
-            badtab.push tabTime
-            console.log badtab
+          for bad in badtab
+            console.log bad
+            console.log tab.id
+            unless tab.id == bad.id2
+              tabTime.id2 = tab.id
+              console.log badtab
+              badtab.push tabTime
+              console.log badtab
 
-        #unless tab.id in badtab
-         # badtab.push tab.id
-        chrome.notifications.create 'superId'+Math.random(), opt, () ->
-          console.log 'notification callback!'
-          console.log 'badtab = ', badtab
+          #unless tab.id in badtab
+           # badtab.push tab.id
+          chrome.notifications.create 'superId'+Math.random(), opt, () ->
+            console.log 'notification callback!'
+            console.log 'badtab = ', badtab
    )
 
 chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
