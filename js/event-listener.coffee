@@ -76,10 +76,11 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
           message: 'Nicht ablenken lassen!',
           iconUrl: "images/calendar-icon_128.png"
         }
-        unless tab.id in badtab
-          #console.log badtab
-          badtab.push tab.id
-          #console.log badtab
+        for bad in badtab
+          if tab.id == bad.id
+            console.log badtab
+            badtab.push new TabInfo(tab.id, new Date)
+            console.log badtab
         chrome.notifications.create 'superId'+Math.random(), opt, () ->
           console.log 'notification callback!'
           console.log 'badtab = ', badtab
