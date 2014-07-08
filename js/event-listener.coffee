@@ -41,7 +41,7 @@ formatDate = (date) ->
 
 isInLearningPhase = false
 badtab = []
-blocked = [/.facebook.com$/,/.9gag.com$/,/.reddit.com$/,/.ebay.de$/,/.amazon.de$/,/.twitter.com$/,/.tumblr.com$/,/.fb.com$/]
+blocked = [/facebook.com$/,/9gag.com$/,/reddit.com$/,/ebay.de$/,/amazon.de$/,/twitter.com$/,/tumblr.com$/,/fb.com$/]
 
 distractionStart = null
 distractionMinusPoints = 0
