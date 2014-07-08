@@ -41,10 +41,12 @@ formatDate = (date) ->
 
 isInLearningPhase = false
 badtab = []
-blocked = [/.facebook.com$/,/.9gag.com/]
+blocked = [/.facebook.com$/,/.9gag.com$/,/.reddit.com$/,/.ebay.de$/,/.amazon.de$/,/.twitter.com$/,/.tumblr.com$/,/.fb.com/]
 
 distractionStart = null
 distractionMinusPoints = 0
+
+MIL_TO_MIN = 1/60000
 
 
 currentTabs = []
@@ -101,7 +103,7 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
         unless tab.id in badtab
           badtab.push tab.id
           if distractionStart == null
-            distractionStart = formatDate(new Date())
+            distractionStart = Date.now()
             console.log distractionStart
         chrome.notifications.create 'superId'+Math.random(), opt, () ->
           console.log 'notification callback!'
@@ -125,9 +127,9 @@ chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
     badtabtemp = []
     if badtab.length == 0
       unless distractionStart == null
-        distractionEnd = formatDate(new Date())
+        distractionEnd = Date.now()
         #TODO distraction richtig berechnen wegen Uhrzeit kann nicht einfach abgezogen werden
-        distractionMinusPoints = distractionMinusPoints + (distractionEnd - distractionStart)
+        distractionMinusPoints = distractionMinusPoints + ((distractionEnd - distractionStart)*MIL_TO_MIN)
         console.log 'minus = ', distractionMinusPoints
       distractionStart = null
     console.log 'badtab =' , badtab
@@ -140,12 +142,11 @@ chrome.runtime.onMessage.addListener (request) ->
     console.log 'hostnames erhalten', blocked
   else if type is 'startLearning'
     isInLearningPhase = true
-    learnTimeStart = formatDate(new Date())
+    learnTimeStart = Date.now()
     alert 'Lernphase gestartet!'
   else # stop learning
     isInLearningPhase = false
-    learnTimeEnd = formatDate(new Date())
-    #TODO learnTime richtig berechnen wegen Uhrzeit kann nicht einfach abgezogen werden
+    learnTimeEnd = Date.now()
     learnTime = learnTimeEnd - learnTimeStart
-
+    learnTime *= MIL_TO_MIN
     alert 'Lernphase beendet!'
