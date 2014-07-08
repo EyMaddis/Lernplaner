@@ -83,6 +83,12 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
     url = new URL(tab.url)
 
     updateCurrentTabs () ->
+      badtabtemp = []
+      if tab.id in badtab
+        for bad in badtab
+          unless bad == tab.id
+            badtabtemp.push bad
+        badtab = badtabtemp
 
       for block in blocked
         if url.hostname.match block
