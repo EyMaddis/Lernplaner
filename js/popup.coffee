@@ -30,10 +30,15 @@ getList = () ->
       hosts.push host
   return hosts
 
+chrome.runtime.onMessage.addListener (request) ->
+  console.log request
+
+chrome.runtime.sendMessage {
+  type: 'openPopup'
+}
 $ () ->
   load()
   $(window).on 'beforeunload', () ->
-    alert()
     saveHostnames()
 
   $('#startPhase').click () ->

@@ -140,13 +140,20 @@ chrome.runtime.onMessage.addListener (request) ->
   if type is 'hostnames'
     blocked = request.hostnames
     console.log 'hostnames erhalten', blocked
+  else if type is 'openPopup'
+    chrome.runtime.sendMessage {
+      isInLearningPhase: isInLearningPhase
+      score: scoreManager.score
+    }
   else if type is 'startLearning'
     isInLearningPhase = true
     learnTimeStart = Date.now()
     alert 'Lernphase gestartet!'
-  else # stop learning
+  else if type is 'stopLearning'
     isInLearningPhase = false
     learnTimeEnd = Date.now()
     learnTime = learnTimeEnd - learnTimeStart
     learnTime *= MIL_TO_MIN
     alert 'Lernphase beendet!'
+  else
+    console.log 'invalid message received', request
