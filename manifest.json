@@ -12,6 +12,7 @@
     },
     "permissions": [
         "https://*/",
+        "http://*/",
         "webNavigation",
         "tabs",
         "notifications",
@@ -22,6 +23,6 @@
     ],
     "background": {
         "scripts": ["js/event-listener.js"],
-        "persistent": false
+        "persistent": true
     }
 }
