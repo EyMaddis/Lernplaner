@@ -1,3 +1,5 @@
+isInLearningPhase = false
+
 load = () ->
   chrome.storage.local.get ['hostnames'], (loaded) ->
     console.log 'loaded', loaded
@@ -30,19 +32,40 @@ getList = () ->
       hosts.push host
   return hosts
 
-chrome.runtime.onMessage.addListener (request) ->
-  console.log request
+startPhase = () ->
+  chrome.runtime.sendMessage {type: 'startLearning'}
+  isInLearningPhase = true
+  changeButtons()
 
-chrome.runtime.sendMessage {
-  type: 'openPopup'
-}
+stopPhase = () ->
+  chrome.runtime.sendMessage {type: 'stopLearning'}
+  isInLearningPhase = false
+  changeButtons()
+
+changeButtons = () ->
+  if isInLearningPhase
+    $('#startPhase').hide()
+    $('#stopPhase').show()
+  else
+    $('#startPhase').show()
+    $('#stopPhase').hide()
+
 $ () ->
+  chrome.runtime.onMessage.addListener (request) ->
+    console.log request
+    isInLearningPhase = request.isInLearningPhase
+    changeButtons()
+
+  chrome.runtime.sendMessage {
+      type: 'openPopup'
+    }
   load()
   $(window).on 'beforeunload', () ->
     saveHostnames()
 
-  $('#startPhase').click () ->
-    chrome.runtime.sendMessage {type: 'startLearning'}
+  $('#startPhase').click startPhase
+  $('#stopPhase').click stopPhase
+
 
   $('#hostnames').submit (e) -> e.preventDefault()
   $('#hostnames button[type=submit]').click saveHostnames
