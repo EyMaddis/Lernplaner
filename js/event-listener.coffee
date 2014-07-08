@@ -41,7 +41,7 @@ formatDate = (date) ->
 
 isInLearningPhase = false
 badtab = []
-blocked = [/.facebook.com$/,/.9gag.com$/,/.reddit.com$/,/.ebay.de$/,/.amazon.de$/,/.twitter.com$/,/.tumblr.com$/,/.fb.com/]
+blocked = [/.facebook.com$/,/.9gag.com$/,/.reddit.com$/,/.ebay.de$/,/.amazon.de$/,/.twitter.com$/,/.tumblr.com$/,/.fb.com$/]
 
 distractionStart = null
 distractionMinusPoints = 0
@@ -92,22 +92,14 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
             message: 'Nicht ablenken lassen!',
             iconUrl: "images/calendar-icon_128.png"
           }
-
-      if url.hostname in blocked
-        opt = {
-          type: "basic",
-          title: "Wolltest du nicht lernen?",
-          message: 'Nicht ablenken lassen!',
-          iconUrl: "images/calendar-icon_128.png"
-        }
-        unless tab.id in badtab
-          badtab.push tab.id
-          if distractionStart == null
-            distractionStart = Date.now()
-            console.log distractionStart
-        chrome.notifications.create 'superId'+Math.random(), opt, () ->
-          console.log 'notification callback!'
-          console.log 'badtab = ', badtab
+          unless tab.id in badtab
+            badtab.push tab.id
+            if distractionStart == null
+              distractionStart = Date.now()
+              console.log distractionStart
+          chrome.notifications.create 'superId'+Math.random(), opt, () ->
+            console.log 'notification callback!'
+            console.log 'badtab = ', badtab
    )
 
 chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
@@ -128,7 +120,6 @@ chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
     if badtab.length == 0
       unless distractionStart == null
         distractionEnd = Date.now()
-        #TODO distraction richtig berechnen wegen Uhrzeit kann nicht einfach abgezogen werden
         distractionMinusPoints = distractionMinusPoints + ((distractionEnd - distractionStart)*MIL_TO_MIN)
         console.log 'minus = ', distractionMinusPoints
       distractionStart = null
