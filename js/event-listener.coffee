@@ -10,24 +10,24 @@ class TabInfo
   costructor: (@id,@time) ->
 
 class ScoreManager
-  HOUR_BONUS = 20
-  BONUS = 1
-  MALUS = 1
+  ScoreManager.HOUR_BONUS = 20
+  ScoreManager.BONUS = 1
+  ScoreManager.MALUS = 1
 
   constructor : () ->
     @score = 0
 
   newPhase: (hours) ->
     hours = hours || 1
-    @score = hours * HOUR_BONUS
+    @score = hours * ScoreManager.HOUR_BONUS
 
   giveBonus: (time) ->
     time = time || 1
-    @score += time * BONUS
+    @score += time * ScoreManager.BONUS
 
   giveMalus: (time) ->
     time = time || 1
-    @score -= time * MALUS
+    @score -= time * ScoreManager.MALUS
 
 forceTwoDigits = (val) ->
   if val < 10
@@ -44,9 +44,11 @@ badtab = []
 blocked = [] #[/facebook.com$/,/9gag.com$/,/reddit.com$/,/ebay.de$/,/amazon.de$/,/twitter.com$/,/tumblr.com$/,/fb.com$/]
 
 distractionStart = null
-distractionMinusPoints = 0
+distractionTime = 0
+learnTimeStart = 0
+learnTime = 0
 
-MIL_TO_MIN = 1/60000
+MIL_TO_MIN = 60000
 
 
 currentTabs = []
@@ -78,21 +80,25 @@ callback = (event) ->
 
 chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
 
-
-  if changeInfo.status == 'complete'
+  console.log 'updated tab, learning?', isInLearningPhase
+  if isInLearningPhase and changeInfo.status == 'complete'
     url = new URL(tab.url)
-
+    console.log 'bevor update'
     updateCurrentTabs () ->
+      console.log 'in update'
       badtabtemp = []
       if tab.id in badtab
         for bad in badtab
           unless bad == tab.id
             badtabtemp.push bad
+            console.log 'bad tab!'
         badtab = badtabtemp
-
+      console.log 'nach tab id check', badtab, blocked
       for block in blocked
-        block = new RegExp "#{block}$"
-        if url.hostname.match block
+        console.log 'block check', block
+        regEx = new RegExp "#{block}$"
+        if url.hostname.match regEx
+          console.log 'matched!'
           opt = {
             type: "basic",
             title: "Wolltest du nicht lernen?",
@@ -104,14 +110,18 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
             if distractionStart == null
               distractionStart = Date.now()
               console.log distractionStart
+
+          console.log 'notification!'
           chrome.notifications.create 'superId'+Math.random(), opt, () ->
             console.log 'notification callback!'
             console.log 'badtab = ', badtab
    )
 
 chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
-
   badtabtemp = []
+  console.log 'removed tab, learning?', isInLearningPhase
+  if not isInLearningPhase
+    return
   updateCurrentTabs () ->
     #console.log badtab
     unless badtab.length == 0
@@ -127,21 +137,27 @@ chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
     if badtab.length == 0
       unless distractionStart == null
         distractionEnd = Date.now()
-        distractionMinusPoints = distractionMinusPoints + ((distractionEnd - distractionStart)*MIL_TO_MIN)
-        console.log 'minus = ', distractionMinusPoints
+        distractionTime = distractionTime + ((distractionEnd - distractionStart)*MIL_TO_MIN)
+        console.log 'distraction time = ', distractionTime
       distractionStart = null
     console.log 'badtab =' , badtab
 )
 
 chrome.runtime.onMessage.addListener (request) ->
   type = request.type
+
+  goodTime = (learnTimeStart - Date.now()) / MIL_TO_MIN || 0
+  badTime = distractionTime || 0
+  score = (goodTime * ScoreManager.BONUS) - (badTime * ScoreManager.MALUS)
+
   if type is 'hostnames'
     blocked = request.hostnames
     console.log 'hostnames erhalten', blocked
   else if type is 'openPopup'
     chrome.runtime.sendMessage {
       isInLearningPhase: isInLearningPhase
-      score: scoreManager.score
+      score: score
+      type: 'openPopupResponse'
     }
   else if type is 'startLearning'
     isInLearningPhase = true
@@ -149,9 +165,12 @@ chrome.runtime.onMessage.addListener (request) ->
     alert 'Lernphase gestartet!'
   else if type is 'stopLearning'
     isInLearningPhase = false
+    badtab = []
     learnTimeEnd = Date.now()
     learnTime = learnTimeEnd - learnTimeStart
-    learnTime *= MIL_TO_MIN
-    alert 'Lernphase beendet!'
+    learnTime /= MIL_TO_MIN
+    scoreManager.giveBonus(learnTime)
+    scoreManager.giveMalus(distractionTime)
+    alert "Lernphase beendet! Gesammelte Punkte: #{scoreManager.score}" # , gelernte Zeit #{learnTime}, abgelenkt: #{distractionTime}
   else
     console.log 'invalid message received', request

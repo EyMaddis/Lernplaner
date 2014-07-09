@@ -36,6 +36,8 @@ startPhase = () ->
   chrome.runtime.sendMessage {type: 'startLearning'}
   isInLearningPhase = true
   changeButtons()
+  saveHostnames()
+
 
 stopPhase = () ->
   chrome.runtime.sendMessage {type: 'stopLearning'}
@@ -53,8 +55,9 @@ changeButtons = () ->
 $ () ->
   chrome.runtime.onMessage.addListener (request) ->
     console.log request
-    isInLearningPhase = request.isInLearningPhase
-    changeButtons()
+    if request.type is 'openPopupResponse'
+      isInLearningPhase = request.isInLearningPhase
+      changeButtons()
 
   chrome.runtime.sendMessage {
       type: 'openPopup'
