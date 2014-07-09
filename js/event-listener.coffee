@@ -43,7 +43,7 @@ isInLearningPhase = false
 badtab = []
 blocked = [] #[/facebook.com$/,/9gag.com$/,/reddit.com$/,/ebay.de$/,/amazon.de$/,/twitter.com$/,/tumblr.com$/,/fb.com$/]
 
-distractionStart = null
+distractionStart = 0
 distractionTime = 0
 learnTimeStart = 0
 learnTime = 0
@@ -107,7 +107,7 @@ chrome.tabs.onUpdated.addListener ((event,changeInfo, tab) ->
           }
           unless tab.id in badtab
             badtab.push tab.id
-            if distractionStart == null
+            if distractionStart < 1
               distractionStart = Date.now()
               console.log distractionStart
 
@@ -135,11 +135,11 @@ chrome.tabs.onRemoved.addListener((tab, removeInfo) ->
     badtab = badtabtemp
     badtabtemp = []
     if badtab.length == 0
-      unless distractionStart == null
+      unless distractionStart  < 1
         distractionEnd = Date.now()
-        distractionTime = distractionTime + ((distractionEnd - distractionStart)*MIL_TO_MIN)
+        distractionTime = distractionTime + ((distractionEnd - distractionStart)/MIL_TO_MIN)
         console.log 'distraction time = ', distractionTime
-      distractionStart = null
+      distractionStart = 0
     console.log 'badtab =' , badtab
 )
 
@@ -168,9 +168,11 @@ chrome.runtime.onMessage.addListener (request) ->
     badtab = []
     learnTimeEnd = Date.now()
     learnTime = learnTimeEnd - learnTimeStart
+    console.log "zeit #{learnTime} ende #{learnTimeEnd} start #{learnTimeStart} disk #{distractionTime}"
     learnTime /= MIL_TO_MIN
-    scoreManager.giveBonus(learnTime)
-    scoreManager.giveMalus(distractionTime)
-    alert "Lernphase beendet! Gesammelte Punkte: #{scoreManager.score}" # , gelernte Zeit #{learnTime}, abgelenkt: #{distractionTime}
+#    scoreManager.giveBonus(learnTime || 0)
+#    scoreManager.giveMalus(distractionTime || 0)
+    scoreTemp = learnTime - distractionTime
+    alert "Lernphase beendet! Gesammelte Punkte: #{scoreTemp.toFixed(2)}, Du hast #{learnTime.toFixed(2)} min gelernt und warst #{distractionTime.toFixed(2)} min abgelenkt"
   else
     console.log 'invalid message received', request

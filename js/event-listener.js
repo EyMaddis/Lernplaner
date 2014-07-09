@@ -74,7 +74,7 @@ endsWith("www.facebook.com", ".facebook.com") -> true!
 
   blocked = [];
 
-  distractionStart = null;
+  distractionStart = 0;
 
   distractionTime = 0;
 
@@ -152,7 +152,7 @@ endsWith("www.facebook.com", ".facebook.com") -> true!
             };
             if (_ref1 = tab.id, __indexOf.call(badtab, _ref1) < 0) {
               badtab.push(tab.id);
-              if (distractionStart === null) {
+              if (distractionStart < 1) {
                 distractionStart = Date.now();
                 console.log(distractionStart);
               }
@@ -194,19 +194,19 @@ endsWith("www.facebook.com", ".facebook.com") -> true!
       badtab = badtabtemp;
       badtabtemp = [];
       if (badtab.length === 0) {
-        if (distractionStart !== null) {
+        if (!(distractionStart < 1)) {
           distractionEnd = Date.now();
-          distractionTime = distractionTime + ((distractionEnd - distractionStart) * MIL_TO_MIN);
+          distractionTime = distractionTime + ((distractionEnd - distractionStart) / MIL_TO_MIN);
           console.log('distraction time = ', distractionTime);
         }
-        distractionStart = null;
+        distractionStart = 0;
       }
       return console.log('badtab =', badtab);
     });
   });
 
   chrome.runtime.onMessage.addListener(function(request) {
-    var badTime, goodTime, learnTimeEnd, score, type;
+    var badTime, goodTime, learnTimeEnd, score, scoreTemp, type;
     type = request.type;
     goodTime = (learnTimeStart - Date.now()) / MIL_TO_MIN || 0;
     badTime = distractionTime || 0;
@@ -229,10 +229,10 @@ endsWith("www.facebook.com", ".facebook.com") -> true!
       badtab = [];
       learnTimeEnd = Date.now();
       learnTime = learnTimeEnd - learnTimeStart;
+      console.log("zeit " + learnTime + " ende " + learnTimeEnd + " start " + learnTimeStart + " disk " + distractionTime);
       learnTime /= MIL_TO_MIN;
-      scoreManager.giveBonus(learnTime);
-      scoreManager.giveMalus(distractionTime);
-      return alert("Lernphase beendet! Gesammelte Punkte: " + scoreManager.score);
+      scoreTemp = learnTime - distractionTime;
+      return alert("Lernphase beendet! Gesammelte Punkte: " + (scoreTemp.toFixed(2)) + ", Du hast " + (learnTime.toFixed(2)) + " min gelernt und warst " + (distractionTime.toFixed(2)) + " min abgelenkt");
     } else {
       return console.log('invalid message received', request);
     }
